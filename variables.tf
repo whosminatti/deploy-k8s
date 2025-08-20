@@ -23,6 +23,5 @@ variable "eks_version" {
 }
 variable "instance_types" {
   description = "value"
-  type        = map()
   default     = ["t3.micro"]
 }
