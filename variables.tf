@@ -16,11 +16,6 @@ variable "vpc_cidr" {
   default       = "10.0.0.0/16"
 }
 
-variable "vpc_name" {
-  description   = "value"
-  type          = string
-}
-
 variable "eks_version" {
   description   = "EKS Version"
   type          = string
