@@ -1,4 +1,4 @@
-resource "aws_eks_cluster" "this" {
+resource "aws_eks_cluster" "teste" {
     depends_on            = [aws_iam_role_policy_attachment.eks_cluster_AmazonEKSClusterPolicy]
     name                  = "${var.project_name}-eks"
     role_arn              = aws_iam_role.eks_cluster.arn
@@ -34,7 +34,7 @@ resource "aws_eks_node_group" "default" {
         aws_iam_role_policy_attachment.eks_nodes_AmazonEC2ContainerRegistryReadOnly,
         aws_iam_role_policy_attachment.eks_nodes_AmazonEKS_CNI_Policy
     ]
-    cluster_name    = aws_eks_cluster.this.name
+    cluster_name    = aws_eks_cluster.teste.name
     node_group_name = "${var.project_name}-node-group"
     node_role_arn   = aws_iam_role.eks_nodes.arn
     subnet_ids      = var.subnet_ids
