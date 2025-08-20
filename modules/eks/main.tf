@@ -40,12 +40,12 @@ resource "aws_eks_node_group" "default" {
     subnet_ids      = var.subnet_ids
 
     scaling_config {
-        desired_size = 2
-        max_size     = 3
+        desired_size = 1
+        max_size     = 2
         min_size     = 1
     }
 
-    instance_types = ["t3.medium"]
+    instance_types = var.instance_types
   
 }
 
