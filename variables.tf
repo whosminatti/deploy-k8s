@@ -5,9 +5,9 @@ variable "aws_region" {
 }
 
 variable "project_name" {
-  description = "value"
-  type = string  
-  default = "teste-ilia"
+  description   = "value"
+  type          = string  
+  default       = "teste-ilia"
 }
 
 variable "vpc_cidr" {
@@ -21,13 +21,8 @@ variable "vpc_name" {
   type          = string
 }
 
-variable "vpc_cidr" {
-  description   = "value"
-  type          = string
-}
-
 variable "eks_version" {
-  description = "EKS Version"
-  type = string
-  default = "1.31"
+  description   = "EKS Version"
+  type          = string
+  default       = "1.31"
 }
