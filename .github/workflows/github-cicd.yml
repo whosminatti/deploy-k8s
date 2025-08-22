@@ -30,15 +30,20 @@ jobs:
 
       - name: Terraform Validate
         run: terraform validate
+      
+      - name: Terraform Import
+        run: |
+          terraform import module.eks.aws_iam_role.cluster teste-ilia-eks-cluster-role || echo "Role already imported"
+          terraform import module.eks.aws_iam_role.nodes teste-ilia-eks-node-role || echo "Role already imported"
 
-      - name: Terraform Plan
-        run: terraform plan -var-file="environment/main.tfvars" -out=tfplan
+            - name: Terraform Plan
+              run: terraform plan -var-file="environment/main.tfvars" -out=tfplan
 
-      - name: Upload Terraform Plan
-        uses: actions/upload-artifact@v4
-        with:
-          name: terraform-plan
-          path: tfplan
+            - name: Upload Terraform Plan
+              uses: actions/upload-artifact@v4
+              with:
+                name: terraform-plan
+                path: tfplan
 
   terraform-apply:
     runs-on: ubuntu-latest
