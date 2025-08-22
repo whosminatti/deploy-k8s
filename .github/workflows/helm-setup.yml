@@ -1,0 +1,89 @@
+name: Setup Helm on EKS
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  setup-helm:
+    runs-on: ubuntu-latest
+    env:
+      CLUSTER_NAME: teste-ilia-eks
+      REGION: ${{ secrets.AWS_REGION }}
+    
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: 1.8.5
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Get EKS Cluster Info
+      id: eks
+      run: |
+        cd environments/main
+        terraform init
+        terraform output -raw kubeconfig > kubeconfig.yaml
+        echo "KUBECONFIG_FILE=kubeconfig.yaml" >> $GITHUB_ENV
+
+    - name: Setup kubectl
+      run: |
+        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+        sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+        kubectl version --client
+
+    - name: Setup Helm
+      run: |
+        curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+        helm version
+
+    - name: Test Cluster Access
+      run: |
+        export KUBECONFIG=${{ env.KUBECONFIG_FILE }}
+        kubectl get nodes
+        kubectl get pods -A
+
+    - name: Install Helm Charts
+      run: |
+        export KUBECONFIG=${{ env.KUBECONFIG_FILE }}
+        
+        # Adicionar repositórios Helm
+        helm repo add bitnami https://charts.bitnami.com/bitnami
+        helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+        helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+        helm repo update
+
+        # Instalar nginx ingress controller
+        helm install ingress-nginx ingress-nginx/ingress-nginx \
+          --namespace ingress-nginx \
+          --create-namespace \
+          --set controller.service.type=LoadBalancer
+
+        # Instalar metrics server (necessário para HPA)
+        helm install metrics-server bitnami/metrics-server \
+          --namespace kube-system \
+          --set apiService.create=true
+
+        # Listar releases instaladas
+        helm list -A
+
+    - name: Verify Installations
+      run: |
+        export KUBECONFIG=${{ env.KUBECONFIG_FILE }}
+        echo "=== Nodes ==="
+        kubectl get nodes
+        echo "=== Helm Releases ==="
+        helm list -A
+        echo "=== Ingress Controller ==="
+        kubectl get svc -n ingress-nginx
