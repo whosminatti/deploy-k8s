@@ -74,6 +74,7 @@ jobs:
   terraform-destroy:
     runs-on: ubuntu-latest
     if: github.event_name == 'workflow_dispatch'
+    needs: terraform-apply
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
