@@ -12,12 +12,5 @@ module "vpc" {
 module "eks" {
   source = "./modules/eks"
   project_name          = var.project_name
-  cluster_version       = var.eks_kubernetes_version
-  subnet_ids            = module.vpc.private_subnet_ids
-  desired_size          = var.eks_desired_size
   instance_type         = var.eks_instance_type
-  min_size              = var.eks_min_size
-  max_size              = var.eks_max_size
-  disk_size             = var.eks_disk_size
-
 }
