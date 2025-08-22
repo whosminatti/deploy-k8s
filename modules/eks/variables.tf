@@ -1,7 +1,8 @@
 variable "project_name" {}
-variable "environment" {}
+variable "subnet_ids" {}
 variable "cluster_version" {}
-variable "vpc_id" {}
-variable "private_subnet_ids" {}
-variable "public_subnet_ids" {}
-variable "node_groups" {}
+variable "instance_type" {}
+variable "min_size" {}
+variable "max_size" {}
+variable "desired_size" {}
+variable "disk_size" {}
