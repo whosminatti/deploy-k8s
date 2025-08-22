@@ -1,25 +1,29 @@
-module "vpc" {
-    source          = "./modules/vpc"
-    project_name    = var.project_name
-    vpc_cidr        = var.vpc_cidr
+data "aws_availability_zones" "available" {
+  state = "available"
 }
 
-module "sg" {
-    depends_on      = [ 
-                        module.vpc
-                      ]
-    source          = "./modules/security_group"
-    project_name    = var.project_name
-    vpc_id          = module.vpc.vpc_id
+data "aws_caller_identity" "current" {}
+
+# Networking
+module "networking" {
+  source = "./modules/networking"
+  project_name          = var.project_name
+  environment           = var.environment
+  vpc_cidr              = var.vpc_cidr
+  availability_zones    = data.aws_availability_zones.available.names
+  public_subnets        = var.public_subnets
+  private_subnets       = var.private_subnets
 }
 
+# EKS Module
 module "eks" {
-    depends_on      = [ 
-                        module.vpc
-                      ]
-    source          = "./modules/eks"
-    project_name    = var.project_name
-    subnet_ids      = module.vpc.public_subnets_id //subnet publica por conta do igw
-    eks_version     = var.eks_version
-    instance_types  = var.instance_types
+  source = "./modules/eks"
+  depends_on            = [module.networking]
+  project_name          = var.project_name
+  environment           = var.environment
+  cluster_version       = var.cluster_version
+  vpc_id                = module.networking.vpc_id
+  private_subnet_ids    = module.networking.private_subnet_ids
+  public_subnet_ids     = module.networking.public_subnet_ids
+  node_groups           = var.node_groups
 }

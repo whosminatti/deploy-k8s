@@ -1,4 +1,7 @@
 variable "project_name" {}
-variable "subnet_ids" {}
-variable "eks_version" {}
-variable "instance_types" {}
+variable "environment" {}
+variable "cluster_version" {}
+variable "vpc_id" {}
+variable "private_subnet_ids" {}
+variable "public_subnet_ids" {}
+variable "node_groups" {}
