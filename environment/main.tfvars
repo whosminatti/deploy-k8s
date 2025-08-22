@@ -1,0 +1,12 @@
+aws_region              = "us-east-1"
+project_name            = "teste-ilia"
+vpc_cidr                = "10.0.0.0/16"
+azs                     = ["us-east-1a", "us-east-1b"]
+public_subnets          = ["10.0.1.0/24", "10.0.2.0/24"]
+private_subnets         = ["10.0.10.0/24", "10.0.20.0/24"]
+eks_kubernetes_version  = "1.31"
+eks_desired_size        = "2"
+eks_instance_type       = "t3.micro"
+eks_min_size            = "1"
+eks_max_size            = "3"
+eks_disk_size           = "20"

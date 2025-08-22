@@ -1,28 +1,19 @@
-output "cluster_name" {
-  description = "Nome do cluster EKS"
-  value       = aws_eks_cluster.main.name
+output "cluster_id" {
+  description = "ID do cluster EKS"
+  value       = aws_eks_cluster.this.id
 }
+
 output "cluster_endpoint" {
   description = "Endpoint do cluster EKS"
-  value       = aws_eks_cluster.main.endpoint
+  value       = aws_eks_cluster.this.endpoint
 }
-output "cluster_version" {
-  description = "Versão do cluster"
-  value       = aws_eks_cluster.main.version
-}
-output "cluster_arn" {
-  description = "ARN do cluster"
-  value       = aws_eks_cluster.main.arn
-}
-output "cluster_security_group_id" {
-  description = "Security Group do cluster"
-  value       = aws_security_group.cluster.id
-}
-output "node_groups" {
-  description = "Node groups criados"
-  value       = aws_eks_node_group.main
-}
+
 output "cluster_certificate_authority_data" {
-  description = "Certificado do cluster"
-  value       = aws_eks_cluster.main.certificate_authority[0].data
+  description = "Certificate authority data do cluster"
+  value       = aws_eks_cluster.this.certificate_authority[0].data
+}
+
+output "node_iam_role_name" {
+  description = "Nome do IAM Role dos nodes"
+  value       = aws_iam_role.nodes.name
 }

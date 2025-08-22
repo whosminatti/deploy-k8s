@@ -1,29 +1,23 @@
-data "aws_availability_zones" "available" {
-  state = "available"
-}
-
-data "aws_caller_identity" "current" {}
-
-# vpc
 module "vpc" {
-  source = "./modules/vpc"
+  source  = "./modules/vpc"
   project_name          = var.project_name
-  environment           = var.environment
   vpc_cidr              = var.vpc_cidr
-  availability_zones    = data.aws_availability_zones.available.names
+  enable_dns_hostnames  = true
+  enable_dns_support    = true
+  azs                   = var.azs
   public_subnets        = var.public_subnets
   private_subnets       = var.private_subnets
 }
 
-# EKS Module
 module "eks" {
   source = "./modules/eks"
-  depends_on            = [module.vpc]
   project_name          = var.project_name
-  environment           = var.environment
-  cluster_version       = var.cluster_version
-  vpc_id                = module.vpc.vpc_id
-  private_subnet_ids    = module.vpc.private_subnet_ids
-  public_subnet_ids     = module.vpc.public_subnet_ids
-  node_groups           = var.node_groups
+  cluster_version       = var.eks_kubernetes_version
+  subnet_ids            = module.vpc.private_subnet_ids
+  desired_size          = var.eks_desired_size
+  instance_type         = var.eks_instance_type
+  min_size              = var.eks_min_size
+  max_size              = var.eks_max_size
+  disk_size             = var.eks_disk_size
+
 }
