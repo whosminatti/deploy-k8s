@@ -4,9 +4,9 @@ data "aws_availability_zones" "available" {
 
 data "aws_caller_identity" "current" {}
 
-# Networking
-module "networking" {
-  source = "./modules/networking"
+# vpc
+module "vpc" {
+  source = "./modules/vpc"
   project_name          = var.project_name
   environment           = var.environment
   vpc_cidr              = var.vpc_cidr
@@ -18,12 +18,12 @@ module "networking" {
 # EKS Module
 module "eks" {
   source = "./modules/eks"
-  depends_on            = [module.networking]
+  depends_on            = [module.vpc]
   project_name          = var.project_name
   environment           = var.environment
   cluster_version       = var.cluster_version
-  vpc_id                = module.networking.vpc_id
-  private_subnet_ids    = module.networking.private_subnet_ids
-  public_subnet_ids     = module.networking.public_subnet_ids
+  vpc_id                = module.vpc.vpc_id
+  private_subnet_ids    = module.vpc.private_subnet_ids
+  public_subnet_ids     = module.vpc.public_subnet_ids
   node_groups           = var.node_groups
 }

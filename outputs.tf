@@ -1,6 +1,6 @@
 output "vpc_id" {
   description = "ID da VPC"
-  value       = module.networking.vpc_id
+  value       = module.vpc.vpc_id
 }
 output "cluster_name" {
   description = "Nome do cluster EKS"
